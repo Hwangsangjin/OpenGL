@@ -8,7 +8,7 @@
 struct ShaderProgramSource
 {
     std::string VertexSource;
-    std::string FragSource;
+    std::string FragmentSource;
 };
 
 static unsigned int CompileShader(unsigned int type, const std::string& source)
@@ -37,12 +37,12 @@ static unsigned int CompileShader(unsigned int type, const std::string& source)
     return id;
 }
 
-static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragShader)
+static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 {
     // 셰이더 프로그램 객체 생성
     unsigned int program = glCreateProgram();
     unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragShader);
+    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
     // 컴파일된 셰이더 코드를 프로그램에 추가하고 링크
     glAttachShader(program, vs);
@@ -121,27 +121,30 @@ int main()
     // 내 플랫폼의 GL_Version 출력하기
     std::cout << glGetString(GL_VERSION) << std::endl;
 
+    // 은면 제거
+    glEnable(GL_CULL_FACE);
+
     // 삼각형 좌표 정보
-    float positions[6]
+    float positions[9]
     {
-        -0.5f, -0.5f,
-         0.0f,  0.5f,
-         0.5f, -0.5f
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
     };
 
     // 데이터를 전달하는 과정
     unsigned int bufferID;
     glGenBuffers(1, &bufferID);
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), positions, GL_STATIC_DRAW);
 
     // 데이터를 해석하는 방법
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
     // 셰이더 생성
     ShaderProgramSource source = ParseShader("Resource/Shaders/Basic.shader");
-    unsigned int shader = CreateShader(source.VertexSource, source.FragSource);
+    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);
 
     /* Loop until the user closes the window */
