@@ -44,6 +44,10 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
     glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
 
+    // 데이터를 해석하는 방법
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
